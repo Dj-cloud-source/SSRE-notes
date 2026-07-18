@@ -51,3 +51,43 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
 ```
 
 
+---
+
+
+
+字符集 Charset
+字符集是一个系统支持的所有抽象字符的集合
+
+![[Pasted image 20260716105807.png]]
+
+MySQL中常见的字符集：
+- UTF8
+- GBK
+```sql
+#查看
+show charset
+#建表
+mysql>create table `test`(
+`id` int(4) not null auto_increment,
+`name` char(20) not null,
+primary key (`id`)
+)engine = innodb  charset = utf8;
+
+mysql> alter table t1 charset set utf8 ;
+
+```
+
+MySQL数据类型
+
+主要数据类型
+- 数值
+- 字符
+- 二进制
+- 时间
+
+Type
+- `tinyint` （0-255）的整数
+- `int` 整数
+- `char` 字符串
+- `verchar` 可变长度字符串
+- `enum` 枚举
