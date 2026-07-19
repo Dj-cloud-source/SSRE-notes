@@ -354,6 +354,115 @@ where student.s_no=score.s_no
 但这是老写法，不够标准
 
 
+```sql
+mysql> select * from person;
 
++------+--------+--------+
+
+| id   | name   | cardId |
+
++------+--------+--------+
+
+|    1 | 张三   |      1 |
+
+|    2 | 李四   |      3 |
+
+|    3 | 王五   |      6 |
+
++------+--------+--------+
+
+3 rows in set (0.00 sec)
+
+mysql> select * from card ;
+
++------+-----------+
+
+| id   | name      |
+
++------+-----------+
+
+|    1 | 饭卡      |
+
+|    2 | 建行卡    |
+
+|    3 | 农行卡    |
+
+|    4 | 工商卡    |
+
+|    5 | 邮政卡    |
+
++------+-----------+
+
+5 rows in set (0.01 sec)
+
+
+mysql> select * from person inner join card  on person.cardId=card.id;
+
++------+--------+--------+------+-----------+
+
+| id   | name   | cardId | id   | name      |
+
++------+--------+--------+------+-----------+
+
+|    1 | 张三   |      1 |    1 | 饭卡      |
+
+|    2 | 李四   |      3 |    3 | 农行卡    |
+
++------+--------+--------+------+-----------+
+```
+
+> 查询过程
+> 从 person 表选取所有记录
+> 对于每个person 记录，查找 card 表中 id 字段与 person.cardId 匹配的记录
+> 将匹配的记录组合成一条结果返回
 
 #### 语法
+```sql
+#内连接
+select * from person inner join card  on person.cardId=card.id;
+```
+
+```sql
+#左外连接会把左边的表的数据全部取出来  ，右边表如果没有就用NULL补上
+mysql>  select * from person left join card on person.cardId=card.id;
+
++------+--------+--------+------+-----------+
+
+| id   | name   | cardId | id   | name      |
+
++------+--------+--------+------+-----------+
+
+|    1 | 张三   |      1 |    1 | 饭卡      |
+
+|    2 | 李四   |      3 |    3 | 农行卡    |
+
+|    3 | 王五   |      6 | NULL | NULL      |
+
++------+--------+--------+------+-----------+
+3 rows in set (0.00 sec)
+
+#右连接如法炮制
+mysql>  select * from person right join card on person.cardId=card.id;
+
++------+--------+--------+------+-----------+
+
+| id   | name   | cardId | id   | name      |
+
++------+--------+--------+------+-----------+
+
+|    1 | 张三   |      1 |    1 | 饭卡      |
+
+| NULL | NULL   |   NULL |    2 | 建行卡    |
+
+|    2 | 李四   |      3 |    3 | 农行卡    |
+
+| NULL | NULL   |   NULL |    4 | 工商卡    |
+
+| NULL | NULL   |   NULL |    5 | 邮政卡    |
+
++------+--------+--------+------+-----------+
+
+
+```
+
+> 感觉实际开发还挺常用的，多表联查
