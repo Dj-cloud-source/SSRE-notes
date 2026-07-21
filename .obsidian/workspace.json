@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/慢查询优化.md",
+                "file": "MySQL/MySQL日志与恢复.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "慢查询优化"
+              "title": "MySQL日志与恢复"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "fe7c98e83e8103ad",
@@ -156,13 +157,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "MySQL/慢查询优化.md",
+                "file": "MySQL/MySQL日志与恢复.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "慢查询优化 的大纲"
+              "title": "MySQL日志与恢复 的大纲"
             }
           }
         ],
@@ -186,13 +187,16 @@
   },
   "active": "36398b86f66a890e",
   "lastOpenFiles": [
-    "MySQL/索引.md",
-    "MySQL/慢查询优化.md",
     "MySQL/MySQL 语法.md",
+    "MySQL/MySQL日志与恢复.md",
+    "MySQL/事务与锁.md",
+    "一轮/MySQL理解.md",
+    "MySQL/慢查询优化.md",
+    "MySQL/索引.md",
+    "Linux 基础/RAID磁盘阵列.md",
     "一轮/Redis.md",
     "MySQL/DQL查询练习.md",
     "Linux 基础/进程管理.md",
-    "Pasted image 20260719095924.png",
-    "一轮/MySQL理解.md"
+    "Pasted image 20260719095924.png"
   ]
 }
