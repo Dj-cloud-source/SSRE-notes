@@ -113,7 +113,7 @@ mysql -uroot -p123456  <  /backup/student.sql
 
 
 
-所以，常用的全量热备命令
+所以，==常用的全量热备命令==
 ```bash
 
 mysqldump -uroot -p123456 -A -R --triggers --master-data=2 --single-transaction |gzip > /backup/full_$(date +%F).sql.gz
