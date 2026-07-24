@@ -56,6 +56,9 @@ yum命令
 
 
 
+
+[无网状态安装软件（RHCE）](https://ncloud.eagleslab.com/Linux%E5%9F%BA%E7%A1%80/%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%AE%A1%E7%90%86.html#yum%E8%87%AA%E5%BB%BA%E6%BA%90) 
+
 ## ==换源==
 
 ```bash

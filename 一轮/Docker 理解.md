@@ -1,4 +1,4 @@
-# Docker 
+## Docker 
 
 
 
@@ -30,7 +30,7 @@ Docker
 
 Docker 并不虚拟化任何硬件、网络，也不装操作系统，
 
-Docker 快的原因，是共享底层宿主机的[内核]( ' 所谓内核，不过是那些：进程（PID）、内存（memory）、网络、磁盘、文件系统、系统调用（syscall）')  “宿主机已经有内核了，我直接用它”
+Docker 快的原因，是因为容器共享底层宿主机的[内核]( ' 所谓内核，不过是那些：进程（PID）、内存（memory）、网络、磁盘、文件系统、系统调用（syscall）') ， “宿主机已经有内核了，我直接用它”
 
 {
 
@@ -61,15 +61,20 @@ Docker 使用两个技术
 
 
 
-Namespace
+`Namespace` 
 
 进到容器内部  `ps aux` ，就会发现，容器有自己的 PID，所以才说“在容器里看，它以为自己拥有整个世界”
+1. PID
+2. NET 网络
+3. MNT 挂载
+4. IPC 进程通信隔离
+5. UTC hostname隔离
+6. USER 用户权限
 
 
 
 
-
-Cgroup
+`Cgroup` 
 
 这个是资源限制的，规定这个容器只能用 这么多CPU和内存
 
@@ -112,7 +117,7 @@ Docker 容器则是”租房子“，共享地基、电梯，互不干扰，快�
 4. 公有仓库Docker hub，公司私有仓库Registry
 
 5. 数据存储（数据卷 volumes ，但只是单纯关联了 dir？）
-6. 网络管理（没学会）
+6. 网络管理[^1]（没学会，需要一点计网知识）
 
 
 
@@ -123,6 +128,185 @@ Docker 容器则是”租房子“，共享地基、电梯，互不干扰，快�
 
 
 
+## 命令
 
+
+
+```bash
+docker info
+```
+
+
+```bash
+docker search nginx
+#实际工作中，通常去hub看官方镜像说明
+
+
+docker pull nginx:latest
+docker pull nginx:1.27
+
+
+```
+
+
+```bash
+docker image ls
+
+
+docker stats  
+```
+
+
+
+```bash
+docker rmi nginx
+
+docker rmi abc123456
+
+```
+
+```bash
+docker run  -d nginx
+
+docker run -d --name web01  nginx
+#以后可以用 容器名 web01 操作
+
+
+docker run -d  \
+--name web01 \
+-p  8080:80  \
+nginx
+```
+
+
+```bash
+#排障常用
+docker ps -a
+
+docker inspect web01
+```
+
+
+
+```bash
+
+docker exec -it web01  bash
+
+docker exec -it web01  sh
+
+docker exec web01  ps  aux
+
+exit
+```
+`-i` ：保持标准输入
+`-t` ：分配一个终端
+`-it` ：像登录Linux一样操作容器
+
+
+
+```bash
+docker stop web01
+docker start web01
+docker restart  web01
+```
+
+
+
+```bash
+
+docker logs  web01
+docker logs  --tail 20 web01
+docker logs  --since 10m web01
+
+#实时排障常用
+docker logs -f --tail  100  web01
+
+```
+
+
+
+
+
+
+
+
+
+
+[^1]: 下面
+```bash
+
+docker network ls
+```
+
+重点学 bridge
+
+bridge，docker0 相当于一个网络中转站、虚拟交换机
+
+
+容器IP：172.17.0.2
+宿主机IP：192.168.1.10
+
+容器访问网络
+```markdown
+172.17.0.2
+    │
+    ▼
+docker0
+    │
+    ▼
+宿主机
+    │
+    ▼
+NAT 地址转换
+    │
+    ▼
+192.168.1.10
+    │
+    ▼
+互联网
+```
+
+外部网站看到的来源通常不是容器的 `172.17.0.2` ，而是宿主机对外的IP
+`172.17.0.2` 是私有地址，不能直接在互联网中路由。
+
+手机：192.168.1.3
+        ↓ NAT
+路由器公网IP
+        ↓
+互联网
+
+
+外部访问容器
+```markdown
+客户端访问 宿主机IP:8080
+              │
+              ▼
+       Docker 端口转发
+              │
+              ▼
+        容器IP:80
+```
+
+
+容器间通信
+两个容器通过`docker0` 通信
+```markdown
+Container A
+      │
+      ▼
+docker0
+      │
+      ▼
+Container B
+```
+
+
+
+总结
+bridge模式（最常用）
+
+有独立容器 IP
+通过 NAT 上网
+通过 -p 对外暴露服务
 
 
