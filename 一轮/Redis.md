@@ -1,4 +1,6 @@
 
+## 理解
+
 之前讲过Mysql，说过Mysql是关系型数据库，但没有深入，这次稍微进阶一点
 
 
@@ -17,6 +19,11 @@ Mysql 存在磁盘上，读写速度较慢；它的核心任务是保障业务�
 常用于：热门商品缓存、验证码、登陆 Session、计数器、排行榜、分布式锁、消息队列（靠一些数据结构实现）（我觉得可以用kaflka和redis给南邮高并发的应用）
 
 
+Redis原理
+为什么快？
+1. 不用磁盘而是内存（避免磁盘寻址、机械等待、IO等待）
+2. 单线程模型。减少线程切换、锁竞争
+3. IO多路复用
 
 
 但 它 是非关系型数据库，常用键值对来存数据
@@ -44,18 +51,21 @@ key更像是这条数据本身的唯一地址。
 
 虽然 Redis 主要把数据放在内存中，但它也提供持久化机制，避免进程重启后数据全部丢失
 
-
-数据结构
-- string
-- hash
-- list
-- set
-- Zset
+key永远是字符串，但values可以使用不同数据结构
+不同数据结构决定不同用途
+数据结构：
+- string:SDS
+- hash:listpack哈希表
+- list:quicklist
+- set:hash table,intset
+- Zset → {Tom: 90, Jack: 80} 有分数的排序集合[^2]
 
 
 数据持久化
-	1. RDB （Redis Database）：生成快照，保存某一刻的完整数据集
-	2. AOF（Append Only File）：记录每一次 *写命令*  
+	1. RDB （Redis Database）：定期生成快照，按配置 周期性生成数据快照，保存某一刻的全量数据集
+	2. AOF（Append Only File）：增量日志，记录每一次 **写** 操作  ，数据安全
+
+
 
 
 主从复制
@@ -65,7 +75,7 @@ key更像是这条数据本身的唯一地址。
 
  哨兵架构 sentinel
 	 1.哨兵是“独立的”，独立运行的进程
-	 2.一旦Master出问题，哨兵会立刻发现。然后多个 Sentinel 之间通信、投票，“提拔”新的主节点
+	 2.一旦Master出问题，哨兵会立刻发现。然后多个 Sentinel [^3]之间通信、投票，“提拔”新的主节点
 	 （和 k8s 的探针很像，但Sentinel能自动故障转移）
 
 
@@ -77,6 +87,121 @@ Redis Cluster集群架构就是用来解决高并发的
 3. Gossip（流言蜚语、闲聊）。多个节点相互确认集群状态（有点像村口大妈闲聊）
 
 
+缓存设计
+
+1. 缓存穿透（查询不存在的数据）
+	- 布隆过滤器
+	- 缓存空值
+
+ 2. 缓存击穿 （热点key、热门商品突然过期，大量请求打到MySQL）
+	- 互斥锁
+	- 永不过期
+
+3. 缓存雪崩（大量key同时过期）
+	- 过期时间随机化
+	- 多级缓存
+
+
+
+Redis运维
+
+
+
+## 基本命令
+
+
+
+命名规范
+1. 使用冒号分隔层级
+2. 使用有意义的前缀（功能、业务）
+3. 保持统一（小写、日期）
+
+
+先启动redis客户端
+```bash
+redis-cli info
+redis-cli
+```
+
+
+>实际开发中有个习惯，命令大写、key小写
+```redis
+#判断key是否存在
+EXISTS key
+
+#获取key的类型
+TYPE key
+
+RENAME key newkey
+
+#保存数据
+SET key value
+
+#获取数据
+GET key
+
+#删除
+DEL key
+
+```
+
+
+```redis
+#批量设置
+MSET name tom age 20 city Nanjing
+
+#批量获取
+MGET name age city
+```
+
+数量操作
+```redis
+SET count 10
+
+INCR count
+#count=11
+
+
+INCR article:1000:view
+#阅读量+1
+
+
+
+
+INCR count 10
+#count=21
+
+#DECR 同理
+DECR count
+
+
+```
+
+设置过期时间
+```redis
+#300秒过期
+SET code 9527  EX 300
+
+#查看还剩多久
+TTL code 
+
+#NX 不存在才创建
+SET sms:limit:1001 1 EX 60 NX
+
+
+```
+
+
+```redis
+
+SELECT 0
+```
+
+
 
 
 [^1]: Cluster 有16384 个槽。key 先经过 CRC16 算法计算哈希值，然后再对 16384 取模，得到槽位编号，
+
+[^2]: 可用于排行榜、热搜。为什么ZSet用跳表？答：因为排行榜需要按分数排序、范围查询、插入删除。O(logN)
+
+[^3]: 防止单个哨兵误判，比如说网络抖动

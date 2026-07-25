@@ -67,7 +67,6 @@ Container
 ```
 
 
-
 资源清单yaml
 （附图）
 
@@ -99,7 +98,7 @@ service[^2]：
 
 
 PV与PVC：这个也是抽象性的设计
-	PV把物理硬盘抽象成储存池。
+	物理存储——> PV。
 	PVC在PV的基础上，申请使用存储空间
 
 
@@ -109,7 +108,7 @@ PV与PVC：这个也是抽象性的设计
 
 在浏览器访问https://qq.com
 
- 1. dns，负载均衡 /  nodeport集群ip
+ 1. dns——>负载均衡 /  nodeport集群ip
  2. 进入集群入口，也就是 Ingress controller
  3. controller 再根据 Ingress 域名和路径 Rule 决定转发到哪个 service
  4. service 再在后面的一组pod 里选一个
@@ -128,7 +127,7 @@ PV与PVC：这个也是抽象性的设计
 
 
 Yaml 资源清单
-![[Pasted image 20260724151238.png]]
+![[Pasted image 20260725101554.png]]
 
 
 
@@ -136,7 +135,7 @@ Yaml 资源清单
 
 pod生命周期
 
-![[Pasted image 20260724144320.png]] 
+![[Pasted image 20260725101532.png]] 
 
 
 
@@ -205,7 +204,7 @@ metrics-server ：资源指标
 
 
 
-[^1]: 为什么以pod而不以docker？因为pod间网络通信、共享存储、统一分配资源、统一生死。（或者说谷歌实践下来，觉得这样打包着管理是更优解）（还是回到cpu memory net process？）
+[^1]: 为什么以pod而不以容器？因为pod间网络通信、共享存储、统一分配资源、统一生死。（或者说谷歌实践下来，觉得这样打包着管理是更优解）（还是回到cpu memory net process？）
 
 [^2]: sevice如何找到pod？1标签选择器，2端点控制器。service通过selector匹配pod的标签，如app=nginx。
 
