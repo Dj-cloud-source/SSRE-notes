@@ -31,6 +31,11 @@ yum命令
 
 * `yum` `search` `“` `包名` `”`  模糊搜索相关包名
 
+找不到包？
+```bash
+yum install -y epel-release 
+```
+
 ## 安装软件包
 
 * `yum` `install` `包名` `-y`
