@@ -8,39 +8,6 @@
 
 
 
-安装好虚拟机后
-
-```bash
-echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
-systemctl restart sshd
-ip a |grep 192
-```
-
-修改名字
-
-
-```bash
-yum install -y vim
-vim /etc/hostname
-```
-
-输入新名字
-
-
-
-修改颜色
-
-```bash
-export PS1="\[\e[37;40m\][\[\e[37;41m\]\u\[\e[37;41m\]@\h\[\e[37;40m\] \W\[\e[0m\]]\\$ "
-```
-
-
-
-
-
-
-
-
 
 #### 1. 显示文件
 
