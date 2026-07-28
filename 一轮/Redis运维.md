@@ -36,3 +36,6 @@ Redis运维
 		2. 找大key   `redis-cli  --bigkey`
 		3. 设置淘汰策略 `maxmemory-policy allkey-lru` 
 	4. 主从异常
+
+
+

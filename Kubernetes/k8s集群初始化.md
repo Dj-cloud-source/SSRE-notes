@@ -11,9 +11,8 @@ vim /etc/hosts
 192.168.60.133  master1
 192.168.60.134  node01
 192.168.60.135  node02
-
 ```
-
+> 节点环境准备，让三台机器互相认识
 ```bash
 scp /etc/hosts  root@node01:/etc/hosts
 scp /etc/hosts  root@node02:/etc/hosts
@@ -75,8 +74,11 @@ cd /etc/yum.repos.d
 sed -i 's#download.docker.com#mirrors.ustc.edu.cn/docker-ce#g' docker-ce.repo
 
 yum -y install docker-ce
-
 ```
+> k8s对内核和网络有要求。
+> 关闭交换分区，因为调度依赖准确的资源管理。
+> 开启ip转发，因为pod网络需要Linux转发。
+> br_netfilter     k8s service 网络依赖  让桥接流量进过 iptables。
 
 
 ```bash
@@ -190,6 +192,13 @@ cd kubernetes-1.29.2-150500.1.1
 systemctl enable kubelet.service
 
 ```
+ >安装容器运行时，因为k8s不直接管理docker，这里使用cri作为桥梁。不过现在更流行containerd 。
+ >安装包里的：
+ >kubeadm 负责创建集群
+ >kubelet 负责管理pod
+ >kubectl 管理员命令
+ 
+ 
 
 
 
@@ -204,9 +213,12 @@ systemctl enable kubelet.service
 kubeadm init --apiserver-advertise-address=192.168.60.133 --image-repository registry.aliyuncs.com/google_containers --kubernetes-version 1.29.2 --service-cidr=10.10.0.0/12 --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --cri-socket unix:///var/run/cri-dockerd.sock
 
 ```
+> 创建控制面组件
+> 初始化 etcd 。k8s根据里面的yaml启动静态pod
+
+
 
 一定保存这一串！！ 
-
 ```
 kubeadm join 192.168.60.133:6443 --token wojwpk.9jepxnk5vxdleyc3 --discovery-token-ca-cert-hash sha256:f0c637a443beda7191fe32c8e9cbdc624cdf498c773bbdc4655568da2b046517
 ```
@@ -219,7 +231,7 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ```
-
+> 创建管理员配置，让 kubectl 可以连接集群
 
 
 ### 然后是node加入集群
@@ -237,7 +249,7 @@ kubeadm join 192.168.60.133:6443 --token wojwpk.9jepxnk5vxdleyc3 --discovery-tok
 
 ```
 
-
+（上面的 init 和 join就是所谓的集群初始化）
 
 ### 三个一起执行
 
@@ -257,15 +269,21 @@ docker load -i calico-node-v3.26.3.tar
 docker load -i calico-typha-v3.26.3.tar
 
 ```
+> k8s有了，但是pod没有CNI，不能通信，所以还要初始化网络组件
+> Calico是CNI网络插件，安装后可提供 podip ，网络通信，网络策略
+
 
 
 ### 换成只有master
 
+（组件初始化）
 ```bash
 
 wget http://file.eagleslab.com:8889/pkg/calico-typha.yaml
 
+
 kubectl apply -f calico-typha.yaml
+
 
 kubectl get pod -A
 

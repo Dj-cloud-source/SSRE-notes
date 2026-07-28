@@ -65,7 +65,8 @@ Pod
       │
 Container
 ```
-
+> ReplicaSet 控制器负责维护集群中运行的Pod数量
+> 
 
 资源清单yaml
 （附图）
