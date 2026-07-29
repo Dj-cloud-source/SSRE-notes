@@ -1,6 +1,6 @@
 
 
-完成[#新机初始化](SSRE/Linux 基础/新机初始化)后
+完成[ 新机初始化](SSRE/Linux 基础/新机初始化)后
 
 
 ```bash
@@ -213,7 +213,7 @@ systemctl enable kubelet.service
 kubeadm init --apiserver-advertise-address=192.168.60.133 --image-repository registry.aliyuncs.com/google_containers --kubernetes-version 1.29.2 --service-cidr=10.10.0.0/12 --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --cri-socket unix:///var/run/cri-dockerd.sock
 
 ```
-> 创建控制面组件
+> 创建控制面组件。部署 API Server/Scheduler/Controller Manager 。配置kubelet，生成kubectl配置
 > 初始化 etcd 。k8s根据里面的yaml启动静态pod
 
 

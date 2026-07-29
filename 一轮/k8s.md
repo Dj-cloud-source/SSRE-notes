@@ -51,6 +51,14 @@ k8s就像那位指挥家
 
 
 ## 一些概念：
+
+
+节点Node就是一台真实的服务器物理机或虚拟机
+集群Cluster 是 是一组服务器节点的集合
+
+
+
+
 pod
 	“豆荚”。pod是k8s最小调度单位[^1]。
 	一个pod里可以有多个容器
@@ -104,6 +112,13 @@ PV与PVC：这个也是抽象性的设计
 
 
 
+数据库 etcd 特点
+- 强一致性，所有人看到同一份集群状态 Raft Consensus Algorithm
+- KV键值存储[^4]
+- Watch pod变化可以实时推送给各组件
+
+
+
 
 用户流量的路径是怎么样的？
 
@@ -145,8 +160,10 @@ pod生命周期
 k8s组件
 
  ![[c6fabf75b8e264691d6339ab6c324c09_720.png]]
-
-
+任何组件都不能直接操作 etcd。
+API Server 负责认证、鉴权、许可、版本转换…… 
+任何组件必须过API Server
+可以说，API Server是总控制室
 
 
 集群初始化
@@ -210,3 +227,28 @@ metrics-server ：资源指标
 [^2]: sevice如何找到pod？1标签选择器，2端点控制器。service通过selector匹配pod的标签，如app=nginx。
 
 [^3]: 
+
+[^4]: /registry
+		pods
+		services
+		deployments
+		nodes
+		leases
+	
+	
+	/registry/pods/default/nginx
+	
+	{
+	  "metadata":{
+	
+	  },
+	
+	  "spec":{
+	
+	  },
+	
+	  "status":{
+	
+	  }
+	}
+	
