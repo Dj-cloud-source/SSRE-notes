@@ -1,4 +1,4 @@
-
+## Service
 节点Node就是一台真实的服务器物理机或虚拟机
 
 集群Cluster 是 是一组服务器节点的集合
@@ -6,6 +6,8 @@
 
 Service本质是什么？
 Service是 一个稳定的虚拟IP + 一套转发规则
+
+
 ```
               Service
 
@@ -229,5 +231,136 @@ kubectl rollout restart daemonset kube-proxy -n kube-system
 4. 看ipvs表
 ```bash
 ipvsadm  -Ln
+```
+
+
+
+## Ingress
+
+
+前面的 Nodeport和LB 都有一定的缺点
+Nodeport 会占用集群机器的端口，当集群变多就会很麻烦。暴露端口，很丑
+LB 缺点是每个Service 需要一个LB，浪费，且需要k8s之外的设备支持
+
+
+
+
+![[Pasted image 20260801093318.png]]  
+**Ingress**  将来自集群外部的http和https路由暴露给集群内的服务。流量路由由配置文件的 **规则** 控制
+
+Ingress Controller，真正转发之人😝，一般是nginx （不过现在k8s-nginx不维护了。更多的是用Gateway API）
+
+
+如图，Ingress 只需要一个Nodeport或者一个LB就可以满足暴露多个Service的需求；
+如图，Service 解决集群内部服务发现，Ingress 解决外部http请求如何进入集群
+
+
+
+
+
+### 看yaml配置规则示例
+
+```yaml
+
+#假设已经有 user-service  order-service
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: shop-ingress
+
+spec:
+
+  rules:
+ 
+  - host: shop.com              #当用户访问 shop 时，规则才生效
+
+    http:
+
+      paths:
+
+      - path: /user              #URL 以/user开头的
+        pathType: Prefix         #只要是/user开头就算命中规则
+
+        backend:
+          service:
+            name: user-service   #命中后，把流量转给集群内名叫 user-service 
+            port:
+              number: 80         #service的端口
+
+
+      - path: /order
+        pathType: Prefix        #逻辑同上，只要是/order开头的路径，转给 order-service的80端口
+
+        backend:
+          service:
+            name: order-service
+            port:
+              number: 80
+```
+
+
+
+### Controller
+
+```bash
+#安装 Ingress Controller
+
+kubectl apply \
+-f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+
+kubectl get pods  -n  ingress-nginx
+
+```
+
+```bash
+#安装helm包管理器，helm在k8s中相当于yum。将yaml文件打包成 chart 的安装包，一键安装升级卸载
+
+curl -fsSL  -o get_helm.sh  
+https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
+chmod 700 get_helm.sh
+./get_helm.sh
+
+
+
+helm repo add bitnami  https://charts.bitnami.com/bitnami
+helm repo list 
+helm repo update
+
+helm search repo nginx
+helm search hub  nginx
+helm show chart  bitnami/nginx
+
+
+#安装部署（示例）
+helm install   nginx   bitnami/nginx  
+helm uninstall nginx-185942
+```
+```bash
+#真安装，不过现在k8s-nginx不维护了。更多的是用Gateway API
+helm  pull ingress-nginx/ingress-nginx
+tar -zxvf  ingress-nginx.tar.gz
+
+
+#修改 value.yaml
+
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+kind: DaemonSet
+ingressClassResource.default: true
+
+
+
+
+
+#如果是本地安装，使用命名空间
+kubectl create ns  ingress 
+helm install ingress-nginx  -n  ingress  . -f  values.yaml
+kubectl get pod  -n ingress
+
 ```
 
