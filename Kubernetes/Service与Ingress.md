@@ -310,7 +310,7 @@ spec:
 
 kubectl apply \
 -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-
+#貌似不行
 
 kubectl get pods  -n  ingress-nginx
 
@@ -319,8 +319,7 @@ kubectl get pods  -n  ingress-nginx
 ```bash
 #安装helm包管理器，helm在k8s中相当于yum。将yaml文件打包成 chart 的安装包，一键安装升级卸载
 
-curl -fsSL  -o get_helm.sh  
-https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
 
 chmod 700 get_helm.sh
 ./get_helm.sh
@@ -328,10 +327,11 @@ chmod 700 get_helm.sh
 
 
 helm repo add bitnami  https://charts.bitnami.com/bitnami
+#这条命令貌似也行不通，访问超时，哎
 helm repo list 
 helm repo update
 
-helm search repo nginx
+helm search repo ingress-nginx
 helm search hub  nginx
 helm show chart  bitnami/nginx
 

@@ -80,7 +80,8 @@ spec:
 
 >改成真实ip
 ```bash
-#每台服务器
+#每台服务器。
+#kubectl debug node/node02  -it --image=rockylinux 可以用这个命令实验上去
 yum install -y  nfs-utils
 
 mkdir -pv /data/nfs/{pv1,pv2,pv3}  
@@ -102,6 +103,7 @@ firewall-cmd --reload
 
 创建PV和PVC
 > ！如果同一个yaml文件里有多个资源，每个文件之间必须加  ---  ！
+>     vim :set list
 ```yml
 #pv.yaml
 
@@ -152,7 +154,7 @@ spec:
 ```
 
 ```bash
-kubectl  create -f pv.yaml
+kubectl  apply -f pv.yaml
 
 kubectl get   pv 
 
@@ -200,7 +202,7 @@ spec:
 
 ```bash
 
-kubectl create  -f  pvc.yaml
+kubectl apply  -f  pvc.yaml
 
 kubectl get pvc  -o wide
 kubectl get pv   -o wide
