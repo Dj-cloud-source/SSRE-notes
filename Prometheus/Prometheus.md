@@ -100,17 +100,17 @@ mkdir /data
 tar -zxvf prometheus-*.tar.gz  -C  /data
 
 cd /data
-chown -R root:root   /data/prometheus-3.13.1.linux-amd64/
+chown -R root:root  /data/prometheus-3.13.1.linux-amd64/
 
 
-ln -sv prometheus-3.13.1.linux-amd64   prometheus
+ln -sv prometheus-3.13.1.linux-amd64/ prometheus
 
 
 systemctl stop firewalld
 setenforce 0
 
 cd /data/prometheus
-systemctl start prometheus
+
 
 #去另一个窗口
 ss -nlt
@@ -127,7 +127,6 @@ vim /usr/lib/systemd/system/prometheus.service
 Description=Prometheus Server
 Documentation=https://prometheus.io/docs/introduction/overview/
 After=network.target
-
 [Service]
 Type=simple
 Restart=on-failure
@@ -137,7 +136,6 @@ ExecStart=/data/prometheus/prometheus \
     --web.listen-address=:9090 \
     --web.enable-lifecycle
 ExecReload=/bin/kill -HUP $MAINPID
-
 [Install]
 WantedBy=multi-user.target
 
@@ -277,14 +275,19 @@ ss -nlt
 yum install -y https://dl.grafana.com/grafana-enterprise/release/13.1.1/grafana-enterprise_13.1.1_29761037902_linux_amd64.rpm
 
 
-yum install -y grafana-enterprise_13.1.1_29761037902_linux_amd64.rpm
+rpm -q grafana-enterprise
 
-systemctl start  grafana-server
+
+systemctl daemon-reload
+systemctl start grafana-server
+systemctl status grafana-server
 #Grafana是3000端口
 
 
 
 #浏览器打开http://ip:3000
+#用户名 admin 
+#密码 admin
 #首次登陆提示改密码
 
 #添加数据源 add data source
