@@ -1,5 +1,5 @@
 
-赵浩的脚本
+zhaohao的脚本
 ```bash
 yum install -y git
 
@@ -12,7 +12,7 @@ cd Tools/install
 ./install_docker_ce.sh
 ```
 
-官方教程
+[官方教程](https://docs.docker.com/engine/install/rhel/#install-using-the-repository) 
 ```bash
 
 sudo dnf -y install dnf-plugins-core
