@@ -6,20 +6,20 @@ MySQL下载
 先换源
 ```bash
 
-mkdir /repobackup
+cd /etc/yum.repos.d/
+mkdir backup
 
-cp /etc/yum.repos.d/* /repobackup/
+cp -a /etc/yum.repos.d/*.repo backup/
+ls /etc/yum.repos.d/backup/
 
-sed -e 's|^mirrorlist=|#mirrorlist=|g' \
-    -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.ustc.edu.cn/rocky|g' \
-    -i.bak \
-    /etc/yum.repos.d/rocky-extras.repo \
-    /etc/yum.repos.d/rocky.repo
-    
-    
+
+sed -e 's|^mirrorlist=|#mirrorlist=|g'     -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun.com/rockylinux|g'     -i.bak     /etc/yum.repos.d/rocky*.repo
+
+
+yum clean all
 yum makecache
+yum repolist -v
 
-yum install -y wget tar
 ```
 
 

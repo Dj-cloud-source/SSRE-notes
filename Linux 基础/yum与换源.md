@@ -67,23 +67,26 @@ yum install -y epel-release
 ## ==换源==
 
 ```bash
-mkdir /repobackup
-cp /etc/yum.repos.d/* /repobackup/
+cd /etc/yum.repos.d/
+mkdir backup
+
+cp -a /etc/yum.repos.d/*.repo backup/
+ls /etc/yum.repos.d/backup/
+```
+
+```bash 
+
+sed -e 's|^mirrorlist=|#mirrorlist=|g'     -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun.com/rockylinux|g'     -i.bak     /etc/yum.repos.d/rocky*.repo
+
 ```
 
 ```bash
-sed -e 's|^mirrorlist=|#mirrorlist=|g' \
-    -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.ustc.edu.cn/rocky|g' \
-    -i.bak \
-    /etc/yum.repos.d/rocky-extras.repo \
-    /etc/yum.repos.d/rocky.repo
-```
-
-```bash
+yum clean all
 yum makecache
+yum repolist -v
 ```
 
-
+[阿里云镜像](https://developer.aliyun.com/mirror/   )
 
 
 

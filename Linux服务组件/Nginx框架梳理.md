@@ -12,9 +12,9 @@
 
 2. 配置文件
 	1. /etc/nginx/nginx.conf
-	2. http {}
-	3. server {}
-	4. location {}
+	2. http { }
+	3. server { }
+	4. location { }
 	5. include 
 
 
@@ -55,7 +55,7 @@
 	1. TLS / SSL
 	2. SSL证书、私钥
 	3. listen 443 ssl
-	4. HTTP > HTTPS 跳转
+	4. HTTP --> HTTPS 跳转
 	5. Cipher 加密套件
 
 
@@ -116,7 +116,7 @@ worker_rlimit_nofile  65535;
 #events层决定Nginx如何处理网络连接
 events{
 	worker_connections  10240;  #单个进程允许的最大并发连接数
-	use epoll;
+	use epoll;         #高性能的IO多路复用机制，采用事件驱动+就绪队列
 	multi_accept  on;  #开启可提高高吞吐
 
 }
@@ -136,6 +136,8 @@ http{
 	
 	#日志访问路径
 	access_log  /var/log/nginx/access.log;
+	#error_log
+	
 	
 	sendfile    on;
 	tcp_nopush on;
@@ -179,7 +181,7 @@ http{
 		
 		#证书和私钥路径
 		ssl_certificate  cert.pem;
-		
+		#ssl_certificate_key
 		
 		
 		
@@ -237,12 +239,12 @@ server {
 	
 	
 	
-	#绑定哪个网址
-	server_name www.qq.com;
+	#绑定哪个网址域名
+	server_name  www.qq.com;
 	
 	
 	
-	#网站文件放哪个文件夹（根目录）
+	#网站文件放哪个文件夹（物理磁盘目录）
 	root  /var/www/html;
 	
 	#默认首页
