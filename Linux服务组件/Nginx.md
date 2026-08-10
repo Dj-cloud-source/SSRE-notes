@@ -44,6 +44,7 @@ uname -m
 gcc --version
 
 yum install -y gcc make
+#如果下载太慢，就换源
 
 gcc --version
 make --version
@@ -472,6 +473,95 @@ WWW-Authenticate: Basic realm="tip:input password "
 
 ```
 
+
+
+
+### Nginx location语法规则
+
+
+1. 无修饰符（普通前缀）：最长的匹配被记下，但若后续有正则匹配成功，则覆盖它
+2. `/`：匹配所有请求
+3. `=` ：精确匹配，完全一致才匹配，匹配后立即停止搜索
+4. `^~`：前缀匹配，匹配到指定开头，停止后续正则匹配
+5. `~`：区分大小写的正则匹配，`~*` 不区分大小写。按配置文件顺序匹配
+
+
+
+
+### HTTPS与证书
+
+> HTTP跳转HTTPS
+```nginx
+server{
+	listen 80;
+	server_name www.qq.com;
+	
+	return 301 https://$host$request_uri;
+}
+```
+
+>HTTPS服务
+```nginx
+server {
+	listen 443 ssl;
+	server_name www.qq.com;
+	
+	#证书位置
+	ssl_certificate  /etc/nginx/ssl/fullchain.pem;
+	
+	#私钥（一般放HSM，现阶段不必研究）
+	ssl_certificate_key  /etc/nginx/ssl/privkey.pem;
+	
+	location /{
+	……
+	}
+}
+```
+```bash
+#查看证书、测试tls
+openssl x509 -in server.crt  -text  -noout
+openssl s_client  -connect example.com:443
+nginx -t
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Epoll 、IO多路复用
+
+（8月10日，待写
+
+
+
+
+
+
+
+
 [^1]: 重新编译！
 	不是重装系统，也不是删掉Nginx 。
 	而是保留原来的配置和源码  → 重新执行 `./configure` 加参数 →重新生成二进制文件 → 替换Nginx可执行文件
@@ -518,3 +608,4 @@ WWW-Authenticate: Basic realm="tip:input password "
 
 
 	```
+

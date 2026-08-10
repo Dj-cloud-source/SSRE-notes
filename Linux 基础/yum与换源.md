@@ -86,7 +86,7 @@ yum makecache
 yum repolist -v
 ```
 
-[阿里云镜像](https://developer.aliyun.com/mirror/   )
+[阿里云镜像网站](https://developer.aliyun.com/mirror/   )
 
 
 
