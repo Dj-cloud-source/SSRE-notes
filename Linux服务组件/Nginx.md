@@ -476,6 +476,116 @@ WWW-Authenticate: Basic realm="tip:input password "
 
 
 
+### 流量控制
+
+1. `limit_req` 限制请求速率
+2. `limit_req_zone` 定义限流规则和共享内存区
+3. `burst` 允许短时间突发请求
+4. `nodelay` 突发请求立即处理
+5. `limit_conn` 限制并发连接数
+6. `limit_conn_zone` 定义连接限制区域
+
+
+
+#### 平均速率
+
+`limit_req_zone` 
+定义限流规则
+```nginx
+http {
+	limit_req_zone $binary_remote_addr   #每个IP单独区分
+					zone=limit_name:10m  #限流名字、分配10MB共享内存
+					rate=10r/s;          #限每秒10次
+}
+```
+
+
+`limit_req` 
+启用规则
+
+```nginx
+server {
+	listen 80;
+	location /api/login {
+		limit_req   zone=limit_name;
+		proxy_pass http://backend;
+	}
+}
+```
+
+
+
+#### 突发请求
+
+`burst` 容忍短时间突发请求
+因为在现实中，有突发流量是很正常的事，如果限制太死，多点几下可能就被限流了
+所以可以在正常限速之外，允许有突发请求进入等待队列，慢慢处理
+
+
+```nginx
+
+server {
+	listen 80;
+	location /api/login {
+		limit_req   zone=limit_name  burst=20;
+		proxy_pass http://backend;
+	}
+}
+
+```
+
+
+
+
+`nodelay` 容忍的突发请求别等，立即处理
+这个就是在刚才 `burst` 之上又进一步
+
+```nginx
+
+http {
+	limit_req_zone $binary_remote_addr   
+					zone=limit_name:10m  
+					rate=10r/s;        
+
+
+server {
+	listen 80;
+	location /api/login {
+		limit_req   zone=limit_name  burst=20  nodelay;
+		
+		proxy_pass http://backend;
+	}
+}
+```
+
+
+
+
+
+`limit_conn` 限制并发连接数
+同一个IP，最多同时有几个连接
+
+```nginx
+
+http {
+	limit_conn_zone  $binary_remote_addr  zone=limit_name:10m;
+	
+	
+	server {
+		location / {
+			limit_conn  limit_name  10;  #同一个IP，同时最多允许10个并发连接
+		}
+	}
+}
+```
+
+>请求太快 → `limit_req`
+>请求太多 → `limit_conn` 
+
+
+
+
+
 ### Nginx location语法规则
 
 

@@ -38,6 +38,7 @@ http {
 `upstream backend` ：相当于创建了一个后端服务器组，组名叫 `backend` 
 `proxy_pass http://backend;` ：转给 `backend` 这一组机器，至于具体选哪台，让Nginx自己决定。
 
+相当于一个代号
 
 
 
@@ -114,7 +115,7 @@ upstream backend{
 
 不过生产中，这个比较少用。更经常用的是无状态Token哈。
 
-
+>“Nginx 可以通过 `ip_hash` 实现一定程度的会话保持，但生产系统通常更倾向于应用无状态化，把 Session 放到 Redis 等共享存储中，这样扩缩容和故障切换更加方便。”
 
 
 
