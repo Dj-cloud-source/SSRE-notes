@@ -43,7 +43,7 @@ uname -m
 
 gcc --version
 
-yum install -y gcc make
+yum install -y gcc make tar
 #如果下载太慢，就换源
 
 gcc --version
@@ -51,9 +51,10 @@ make --version
 curl -I https://nginx.org/
 
 cd /usr/local/src
+
 curl -O https://nginx.org/download/nginx-1.28.0.tar.gz
 ls -lh nginx-1.28.0.tar.gz
-yum install -y tar
+ 
 
 tar -zxvf nginx-1.28.0.tar.gz
 
@@ -160,7 +161,7 @@ ls /usr/local/nginx
 
 
 
-/usr/local/nginx/sbin/nginx -v
+
 
 
 /usr/local/nginx/sbin/nginx -V
